@@ -9,62 +9,68 @@ import it.polito.tdp.noleggio.model.Event.EventType;
 public class Simulatore {
 	
 	// Parametri di ingresso
-	private int NC ;
-	private Duration T_IN = Duration.ofMinutes(10) ;
-	private Duration T_TRAVEL = Duration.ofHours(1) ; // 1, 2, o 3 volte tanto
+	private int NC;
+	private Duration T_IN = Duration.ofMinutes(10);
+	private Duration T_TRAVEL = Duration.ofHours(1); // 1,2,3 o volte tanto (durata del noleggio)
+	
 	
 	// Valori calcolati in uscita
-	private int nClientiTot ;
-	private int nClientiInsoddisfatti ;
+	private int nClientiTot;
+	private int nClientiInsoddisfatti;
 	
-	// Stato del mondo
-	private int autoDisponibili ;
 	
-	// Coda degli eventi
-	private PriorityQueue<Event> queue ;
+	//Stato del mondo
+	private int autoDisponibili;
 	
-	// Costruttore
+	//Coda degli eventi
+	private PriorityQueue<Event> queue; 
+	
+	//Costruttore
 	public Simulatore(int NC) {
-		this.NC = NC ;
-		this.queue = new PriorityQueue<>();
-		this.autoDisponibili = NC ;
+		this.NC=NC;
+		this.queue= new PriorityQueue<>();
+		this.autoDisponibili=NC;
 	}
 	
 	public void run() {
 		
 		while(!this.queue.isEmpty()) {
-			Event e = this.queue.poll() ;
+			Event e = this.queue.poll();
 			processEvent(e);
 		}
-		
 	}
 	
+	
 	public void caricaEventi() {
-		LocalTime ora = LocalTime.of(8, 0) ;
-		while(ora.isBefore(LocalTime.of(16,0))) {
-			this.queue.add(new Event(ora, EventType.NUOVO_CLIENTE)) ;
-			ora = ora.plus(T_IN) ;
+		LocalTime ora = LocalTime.of(8, 0);
+		while (ora.isBefore(LocalTime.of(16,0))) {
+			this.queue.add(new Event(ora, EventType.NUOVO_CLIENTE));
+			ora= ora.plus(T_IN);
 		}
 	}
+	
 
 	private void processEvent(Event e) {
 		
 		switch(e.getType()) {
 		case NUOVO_CLIENTE:
-			this.nClientiTot++ ;
+			this.nClientiTot++;
 			if(this.autoDisponibili>0) {
-				this.autoDisponibili-- ;
-				int ore = (int)(Math.random()*3)+1;
-				LocalTime oraRientro = e.getTime().plus(Duration.ofHours(ore * T_TRAVEL.toHours())) ; 
-				this.queue.add(new Event(oraRientro, EventType.AUTO_RESTITUITA));
-			} else {
-				this.nClientiInsoddisfatti++ ;
+				this.autoDisponibili--;
+			int ore = (int)(Math.random()*3)+1;
+			LocalTime oraRientro = e.getTime().plus(Duration.ofHours(ore * T_TRAVEL.toHours()));
+			this.queue.add(new Event(oraRientro, EventType.AUTO_RESTITUITA)); 			
 			}
+			else {
+				this.nClientiInsoddisfatti++;
+			}							
 			break;
+		
 		case AUTO_RESTITUITA:
-			this.autoDisponibili++ ;
+			this.autoDisponibili++;
 			break;
 		}
+		
 	}
 
 	public int getnClientiTot() {
@@ -88,6 +94,4 @@ public class Simulatore {
 	}
 	
 	
-	
-
 }

@@ -1,16 +1,17 @@
 package it.polito.tdp.noleggio.model;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class Event implements Comparable<Event>{
 	
-	public enum EventType {
-		NUOVO_CLIENTE,
+	public enum EventType{
+		NUOVO_CLIENTE, 
 		AUTO_RESTITUITA
 	}
 	
-	private LocalTime time ;
-	private EventType type ;
+	private LocalTime time;
+	private EventType type;
 	
 	
 	public Event(LocalTime time, EventType type) {
@@ -32,11 +33,7 @@ public class Event implements Comparable<Event>{
 	}
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((time == null) ? 0 : time.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
+		return Objects.hash(time, type);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -47,20 +44,12 @@ public class Event implements Comparable<Event>{
 		if (getClass() != obj.getClass())
 			return false;
 		Event other = (Event) obj;
-		if (time == null) {
-			if (other.time != null)
-				return false;
-		} else if (!time.equals(other.time))
-			return false;
-		if (type != other.type)
-			return false;
-		return true;
+		return Objects.equals(time, other.time) && type == other.type;
 	}
 	@Override
 	public int compareTo(Event other) {
 		return this.time.compareTo(other.time);
 	}
-	
 	
 	
 
